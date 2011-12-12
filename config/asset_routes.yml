@@ -1,0 +1,20 @@
+ 
+#
+# Sprinkle - Asset management library
+# 
+# @author        Edmundas Kondrašovas <as@edmundask.lt>
+# @license       http://www.opensource.org/licenses/MIT
+#
+
+'(:any)':
+  assets:
+    - jquery: 1.7.1
+    - backbone
+
+welcome/index:
+  assets:
+    - reset
+    - styles
+  replace:
+    - jquery: 1.5.1
+  exclude:
