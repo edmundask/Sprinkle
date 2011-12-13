@@ -292,6 +292,7 @@ class Sprinkle
 	* @param 	string 		(optional) media
 	* @param 	boolean		minify the asset
 	* @param 	boolean		allow the asset to be combined with other assets
+	* @param 	array  		filters
 	* @return	mixed  		asset name or an array of names
 	*/
 
@@ -338,7 +339,7 @@ class Sprinkle
 
 			$asset = array
 			(
-				'type'            	=> 'js',
+				'type'            	=> 'css',
 				'src'             	=> $src,
 				'media'           	=> $media,
 				'minify'          	=> $minify,
@@ -363,9 +364,10 @@ class Sprinkle
 	* Load Javascript asset
 	*
 	* @access	public
-	* @param 	mixed  		source or an array of multiple CSS assets
+	* @param 	mixed  		source or an array of multiple JS assets
 	* @param 	boolean		minify the asset
 	* @param 	boolean		allow the asset to be combined with other assets
+	* @param 	array  		filters
 	* @return	mixed  		asset name or an array of names
 	*/
 
@@ -444,7 +446,7 @@ class Sprinkle
 
 	public function group($group, $assets1 = NULL, $assets2 = NULL)
 	{
-		if((empty($assets1) && empty($assets2))) return FALSE;
+		if((empty($assets1) && empty($assets2))) return;
 
 		if(!empty($assets1))
 		{
@@ -632,8 +634,7 @@ class Sprinkle
 		$loaded_asset = $this->_get_loaded_asset($asset);
 		if(!$loaded_asset) return;
 
-		$loaded_asset->group = $group;
-		$this->_loaded[$loaded_asset->type]->group = $group;
+		$loaded_asset->assign_to_group($group);
 		$this->_groups[$group]['assets'][$asset] = $loaded_asset;
 	}
 

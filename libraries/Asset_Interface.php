@@ -67,6 +67,16 @@ interface Sprinkle_Asset_Interface
 	public function set_tmp($filepath);
 
 	/**
+	* Assign asset to a particular group
+	*
+	* @access	public
+	* @param 	string	group name
+	* @return	void
+	*/
+
+	public function assign_to_group($group);
+
+	/**
 	* Cache the asset
 	*
 	* @access	public
@@ -186,6 +196,19 @@ class Asset implements Sprinkle_Asset_Interface
 		if(!empty($this->tmp_file)) @unlink($this->tmp_file);
 
 		$this->tmp_file = $filepath;
+	}
+
+	/**
+	* Assign asset to a particular group
+	*
+	* @access	public
+	* @param 	string	group name
+	* @return	void
+	*/
+
+	public function assign_to_group($group)
+	{
+		$this->_params['group'] = $group;
 	}
 
 	/**
