@@ -308,21 +308,21 @@ class RemoteAsset extends Asset
 		// We use file_get_contents() instead of cURL because the latter one is for some reason VERY SLOW.
 		if(FALSE !== @file_get_contents($this->full_path, FALSE, stream_context_create(array('http' => array('method' => 'HEAD')))))
 		{
-            foreach ($http_response_header as $header)
-            {
-                if(0 === stripos($header, 'Last-Modified: '))
-                {
-                    list(, $mtime) = explode(':', $header, 2);
-                    $this->last_modified = strtotime(trim($mtime));
+			foreach ($http_response_header as $header)
+			{
+				if(0 === stripos($header, 'Last-Modified: '))
+				{
+					list(, $mtime) = explode(':', $header, 2);
+					$this->last_modified = strtotime(trim($mtime));
 
-                    return $this->last_modified;
-                }
-            }
-        }
-        else
-        {
+					return $this->last_modified;
+				}
+			}
+		}
+		else
+		{
 			return 0;
-        }
+		}
 	}
 }
 

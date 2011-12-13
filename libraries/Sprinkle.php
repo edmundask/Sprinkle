@@ -86,6 +86,8 @@ class Sprinkle
 			$this->load_collection($this->CI->config->item('assets'));
 			$this->_parse_routes($this->CI->config->item('asset_routes'));
 		}
+
+		if($this->_config['cache_expiration'] != 0) $this->flush_cache($this->_config['cache_expiration']);
 	}
 
 	/**
@@ -701,6 +703,15 @@ class Sprinkle
 		return $output;
 	}
 
+	/**
+	* Internal method for outputting the assets
+	*
+	* @access	private
+	* @param 	string	type
+	* @param 	array 	assets
+	* @return	string	HTML
+	*/
+
 	private function _output_assets($type, $assets = '')
 	{
 		$output = '';
@@ -751,9 +762,9 @@ class Sprinkle
 					$filename = $group . '-'. $last_modified .'.'. $type;
 					if(!file_exists($this->_config['cache_dir'] . $filename))
 					{
-						// We may have missed some assets since not every asset is minified
+						/*// We may have missed some assets since not every asset is minified
 						foreach($assets as $asset)
-							if(empty($asset->tmp_file)) $this->_run_filters($asset);
+							if(empty($asset->tmp_file)) $this->_run_filters($asset);*/
 
 						$this->_combine($filename, $assets);
 					}
@@ -934,10 +945,47 @@ class Sprinkle
 	}
 
 	/**
-	* Clean up the folder for temporary file
+	* Flush the assets cache
+	*
+	* When the time parameter is set, only those cache files that are
+	* older than the set time (lifespan) will be removed.
+	*
+	* @access	public
+	* @param 	integer	time in seconds 
+	* @return	void
+	*/
+
+	public function flush_cache($time = NULL)
+	{
+		$dir = realpath($this->_config['cache_dir']);
+
+		if(!$dirhandle = @opendir($dir))
+			return;
+
+		while(FALSE !== ($filename = readdir($dirhandle)))
+		{
+			if($filename != '.' && $filename != '..')
+			{
+				$filename = $dir . '/' . $filename;
+
+				if(!empty($time))
+				{
+					if((filemtime($filename) + $time) <= time())
+						@unlink($filename);
+				}
+				else
+				{
+					@unlink($filename);
+				}
+			}
+		}
+	}
+
+	/**
+	* Clean up the folder in which we stored temporary files
 	*
 	* @access	private
-	* @return	string	void
+	* @return	void
 	*/
 
 	private function _cleanup()
