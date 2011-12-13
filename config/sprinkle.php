@@ -34,6 +34,55 @@ $config['sprinkle']['asset_locations'] = array
 	'assets/'
 );
 
+
+/*
+|--------------------------------------------------------------------------
+| Disable processing
+|--------------------------------------------------------------------------
+|
+| If you have set cache expiration, expired assets will be processed, cached
+| and processed again when the cached file expires. Fetching assets from 
+| remote servers and applying filters can cost you valuable execution time.
+|
+| Even if you let the cache last for infinite amount of time, Sprinkle will
+| always check if the original asset has changed (last modified timestamp)
+| which again increases loading times. Of course, this only applies if you
+| have any filters assigned to them.
+|
+| To avoid such problems, it is advised to turn off asset processing and 
+| run the processing via cronjob or simply from the command line.
+|
+| Sprinkle has a special method for that:
+
+|		$this->sprinkle->bake();
+|
+| For example, you could set up a CLI controller in which you would call 
+| this method.
+|
+| NOTE: this only applies to pre-defined assets. Assets that you load 
+| manually (via js() or css() method) will still be processed (if they
+| have filters).
+|
+*/
+
+$config['sprinkle']['disable_processing'] = FALSE;
+
+
+/*
+|--------------------------------------------------------------------------
+| Check sources
+|--------------------------------------------------------------------------
+|
+| This allows you to constantly check if assets from the original sources
+| have changed. If that's the case, they are then re-processed.
+|
+| However, when having a lot of assets, this may increase execution time.
+|
+*/
+
+$config['sprinkle']['check_sources'] = TRUE;
+
+
 /*
 |--------------------------------------------------------------------------
 | Use YAML
@@ -62,6 +111,7 @@ $config['sprinkle']['use_yaml'] = TRUE;
 
 $config['sprinkle']['minify_css'] = TRUE;
 
+
 /*
 |--------------------------------------------------------------------------
 | Name of the filter which will be used for minifying CSS assets
@@ -85,6 +135,7 @@ $config['sprinkle']['minify_css_filter'] = 'cssmin';
 */
 
 $config['sprinkle']['minify_js'] = TRUE;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -129,12 +180,13 @@ $config['sprinkle']['cache_dir'] =  'assets/cache/';
 | Cache expiration
 |--------------------------------------------------------------------------
 |
-| Cache expiration is set in days. If you wish not allow the cache to 
+| Cache expiration is set in seconds. If you wish not allow the cache to 
 | expire, set the value to 0.
 | 
 */
 
 $config['sprinkle']['cache_expiration'] = 0;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -147,6 +199,7 @@ $config['sprinkle']['cache_expiration'] = 0;
 */
 
 $config['sprinkle']['use_curl'] = FALSE;
+
 
 /*
 |--------------------------------------------------------------------------

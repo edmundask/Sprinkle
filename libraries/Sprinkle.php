@@ -295,13 +295,13 @@ class Sprinkle
 	* @return	mixed  		asset name or an array of names
 	*/
 
-	public function css($src, $media = 'screen', $minify = TRUE, $combine = TRUE)
+	public function css($src, $media = 'screen', $minify = FALSE, $combine = FALSE, $filters = array())
 	{
 		if(empty($src)) return;
 
 		if(is_array($src))
-		{			
-		 	$assets_to_return = array();
+		{
+			$assets_to_return = array();
 
 			foreach($src as $asset)
 			{
@@ -310,9 +310,10 @@ class Sprinkle
 				if(is_array($asset))
 				{
 					$asset_src    	= (isset($asset['src'])) ? $asset['src'] : '';
-					$asset_media  	= (!isset($asset['media'])) ? 'screen' : $asset['media'];
-					$asset_minify 	= (!isset($asset['minify'])) ? TRUE : $asset['minify'];
-					$asset_combine	= (!isset($asset['combine'])) ? TRUE : $asset['combine'];
+					$asset_media  	= (!isset($asset['media'])) ? $media : $asset['media'];
+					$asset_minify 	= (!isset($asset['minify'])) ? $minify : $asset['minify'];
+					$asset_combine	= (!isset($asset['combine'])) ? $combine : $asset['combine'];
+					$asset_filters	= (!isset($asset['filters'])) ? $filters : $asset['filters'];
 				}
 				else
 				{
@@ -320,27 +321,31 @@ class Sprinkle
 					$asset_media  	= $media;
 					$asset_minify 	= $minify;
 					$asset_combine	= $combine;
+					$asset_filters	= $filters;
 				}
 
-				$assets_to_return[] = $this->css($asset_src, $asset_media, $asset_minify, $asset_combine);
+				$assets_to_return[] = $this->css($asset_src, $asset_media, $asset_minify, $asset_combine, $asset_filters);
 			}
 
 			return $assets_to_return;
 		}
 		else
 		{
-			$asset_name = 'stylesheet:'. $dev_src;
+			$asset_name = 'stylesheet:'. $src;
 			$asset_name = str_replace('.', '-', $asset_name);
+			$asset_name = str_replace('http://', '', $asset_name);
+			$asset_name = str_replace('https://', '', $asset_name);
 
 			$asset = array
 			(
-				'type'            	=> 'css',
+				'type'            	=> 'js',
 				'src'             	=> $src,
 				'media'           	=> $media,
 				'minify'          	=> $minify,
 				'combine'         	=> $combine,
 				'group'           	=> 'stylesheets',
-				'selected_version'	=> 'default'
+				'selected_version'	=> 'default',
+				'filters'         	=> $filters
 			);
 
 			// Arrange the array so that it has all keys and values in the right places.
@@ -364,13 +369,13 @@ class Sprinkle
 	* @return	mixed  		asset name or an array of names
 	*/
 
-	public function js($src, $minify = TRUE, $combine = TRUE)
+	public function js($src, $minify = FALSE, $combine = FALSE, $filters = array())
 	{
 		if(empty($src)) return;
 
 		if(is_array($src))
-		{			
-		 	$assets_to_return = array();
+		{
+			$assets_to_return = array();
 
 			foreach($src as $asset)
 			{
@@ -381,33 +386,35 @@ class Sprinkle
 					$asset_src    	= (isset($asset['src'])) ? $asset['src'] : '';
 					$asset_minify 	= (!isset($asset['minify'])) ? TRUE : $asset['minify'];
 					$asset_combine	= (!isset($asset['combine'])) ? TRUE : $asset['combine'];
+					$asset_filters	= (!isset($asset['filters'])) ? $filters : $asset['filters'];
 				}
 				else
 				{
 					$asset_src    	= $asset;
-					$asset_media  	= $media;
 					$asset_minify 	= $minify;
 					$asset_combine	= $combine;
+					$asset_filters	= $filters;
 				}
 
-				$assets_to_return[] = $this->js($asset_src, $asset_minify, $asset_combine);
+				$assets_to_return[] = $this->js($asset_src, $asset_minify, $asset_combine, $asset_filters);
 			}
 
 			return $assets_to_return;
 		}
 		else
 		{
-			$asset_name = 'javascript:'. $dev_src;
+			$asset_name = 'javascript:'. $src;
 			$asset_name = str_replace('.', '-', $asset_name);
 
 			$asset = array
 			(
-				'type'            	=> 'css',
+				'type'            	=> 'js',
 				'src'             	=> $src,
 				'minify'          	=> $minify,
 				'combine'         	=> $combine,
 				'group'           	=> 'javascripts',
-				'selected_version'	=> 'default'
+				'selected_version'	=> 'default',
+				'filters'         	=> $filters
 			);
 
 			// Arrange the array so that it has all keys and values in the right places.
@@ -492,7 +499,7 @@ class Sprinkle
 	{
 		// We do this check because it's allowed not to define versions.
 		if(!array_key_exists('versions', $asset) && $asset['type'] != 'group')
-			$asset['versions']['default'] = $v['src'];
+			$asset['versions']['default'] = $asset['src'];
 
 		$asset['origin'] = (is_url($asset['versions'][$asset['selected_version']])) ? 'remote' : 'local';
 		$asset['src'] = $asset['versions'][$asset['selected_version']];
@@ -704,6 +711,18 @@ class Sprinkle
 	}
 
 	/**
+	* Bake pre-defined assets
+	*
+	* @access	public
+	* @return	void
+	*/
+
+	public function bake()
+	{
+		
+	}
+
+	/**
 	* Internal method for outputting the assets
 	*
 	* @access	private
@@ -747,7 +766,6 @@ class Sprinkle
 					$output .= $this->_create_tags($asset);
 				}
 			}
-
 		}
 
 		// Looks like we have some assets that need to be combined
@@ -762,10 +780,6 @@ class Sprinkle
 					$filename = $group . '-'. $last_modified .'.'. $type;
 					if(!file_exists($this->_config['cache_dir'] . $filename))
 					{
-						/*// We may have missed some assets since not every asset is minified
-						foreach($assets as $asset)
-							if(empty($asset->tmp_file)) $this->_run_filters($asset);*/
-
 						$this->_combine($filename, $assets);
 					}
 
