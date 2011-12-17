@@ -66,22 +66,7 @@ $config['sprinkle']['asset_locations'] = array
 |
 */
 
-$config['sprinkle']['disable_processing'] = TRUE;
-
-
-/*
-|--------------------------------------------------------------------------
-| Check sources
-|--------------------------------------------------------------------------
-|
-| This allows you to constantly check if assets from the original sources
-| have changed. If that's the case, they are then re-processed.
-|
-| However, when having a lot of assets, this may increase execution time.
-|
-*/
-
-$config['sprinkle']['check_sources'] = TRUE;
+$config['sprinkle']['disable_processing'] = FALSE;
 
 
 /*
