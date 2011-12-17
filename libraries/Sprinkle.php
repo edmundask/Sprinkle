@@ -360,7 +360,8 @@ class Sprinkle
 				'combine'         	=> $combine,
 				'group'           	=> 'stylesheets',
 				'selected_version'	=> 'default',
-				'filters'         	=> $filters
+				'filters'         	=> $filters,
+				'pre_defined'     	=> FALSE
 			);
 
 			// Arrange the array so that it has all keys and values in the right places.
@@ -430,7 +431,8 @@ class Sprinkle
 				'combine'         	=> $combine,
 				'group'           	=> 'javascripts',
 				'selected_version'	=> 'default',
-				'filters'         	=> $filters
+				'filters'         	=> $filters,
+				'pre_defined'     	=> FALSE
 			);
 
 			// Arrange the array so that it has all keys and values in the right places.
@@ -526,6 +528,8 @@ class Sprinkle
 		{
 			$selected_version = $version;
 		}
+
+		$asset['pre_defined'] = (!array_key_exists('pre-defined', $asset)) ? TRUE : FALSE;
 
 		$asset['origin'] = (is_url($asset['versions'][$selected_version])) ? 'remote' : 'local';
 		$asset['src'] = $asset['versions'][$selected_version];
@@ -638,6 +642,8 @@ class Sprinkle
 				{
 					foreach($val['replace'] as $name => $version) 
 					{
+						echo $name .' (v: '. $version .')';
+						echo '<br>';
 						$this->replace($name, $version);
 					}
 				}
@@ -810,7 +816,7 @@ class Sprinkle
 		{
 			if($asset->type == $type)
 			{
-				if(!$this->_config['disable_processing'])
+				if(!$this->_config['disable_processing'] || $asset->pre_defined === TRUE)
 				{
 					if($this->_config['minify_'. $type] && $asset->minify)
 					{
