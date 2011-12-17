@@ -1,6 +1,13 @@
 <?php  if(!defined('BASEPATH')) exit('No direct script access allowed');
 
-$config['asset_routes']['welcome/index'] = array
+/**
+ * Sprinkle - Asset management library
+ * 
+ * @author 		Edmundas Kondrašovas <as@edmundask.lt>
+ * @license		http://www.opensource.org/licenses/MIT
+ */
+
+$config['asset_routes']['(:any)'] = array
 (
 	'assets' 		=>	array('jquery'),
 	'exclude'		=>	array(),

@@ -162,16 +162,6 @@ class Sprinkle
 		}
 	}
 
-	public function show_groups()
-	{
-		return $this->_groups;
-	}
-
-	public function show_loaded()
-	{
-		return $this->_loaded;
-	}
-
 	/**
 	* Internal asset loading
 	*
@@ -1159,4 +1149,4 @@ class Sprinkle
 // End Class
 
 /* End of file Sprinkle.php */
-/* Location: ./application/libraries/Sprinkle.php */
+/* Location: ./sparks/sprinkle/1.0.0/libraries/Sprinkle.php */

@@ -8,13 +8,6 @@
 
 '(:any)':
   assets:
-    - jquery: 1.7.1
-    - backbone
-
-welcome/index:
-  assets:
-    - reset
-    - styles
+    - jquery
   replace:
-    - jquery: 1.5.1
   exclude:

@@ -200,4 +200,4 @@ $config['sprinkle']['use_curl'] = FALSE;
 $config['sprinkle']['filters_path'] = 'libraries/filters/';
 
 /* End of file sprinkle.php */
-/* Location: ./application/config/sprinkle.php */
+/* Location: ./sparks/sprinkle/1.0.0/config/sprinkle.php */

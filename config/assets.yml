@@ -11,64 +11,14 @@ jquery:
   minify: true
   combine: false
   versions:
-    default: http://ajax.googleapis.com/ajax/libs/jquery/jquery-1.6.4.js
+    default: http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js
     1.5.1: http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.js
-    1.7.1: http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js
-
-backbone:
-  type:     js
-  src:      backbone.js
-  minify:   true
-  combine:  true
-  filters:
-
-amplify:
-  type:     js
-  src:      amplify.js
-  minify:   true
-  combine:  true
-
-reset:
-  type:     css
-  minify:   true
-  combine:  true
-  src:      reset.css
-  filters:  [css_rewrite]
-
-test:
-  type:     css
-  minify:   true
-  combine:  true
-  src:      http://www.e-grafika.lt/assets/css/main.css
-  filters:  [css_rewrite]
-
-less-test:
-  type:     css
-  minify:   true
-  combine:  true
-  src:      public/test.less
-  filters:  [lessphp]
+    1.6.4: http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.js
 
 # -------------------------------------------------------------------------
 # Asset groups
 # -------------------------------------------------------------------------
-#
-#
 
 js-libs:
   type: group
-  assets: [jquery, backbone]
-
-amplify-group:
-  type: group
-  assets: [amplify]
-
-libs:
-  type:   group
-  assets: [jquery, backbone]
-
-styles:
-  type:   group
-  assets:
-    - test
-    - less-test
+  assets: [jquery]
