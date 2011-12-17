@@ -13,6 +13,10 @@ Sprinkle is an asset management library for CodeIgniter which seeks to simplify 
 * Specifying https protocol in the asset source will prevent Sprinkle from fetching the asset contents.
 * After changing some of the settings in Sprinkle configuration or asset definitions file you may not get the result you want. To do avoid this, you have to clear the cache first.
 
+# How To Use It
+
+See the [wiki](https://github.com/edmundask/Sprinkle/wiki)
+
 # COPYRIGHT
 
 Copyright (c) 2011 Edmundas Kondrašovas
