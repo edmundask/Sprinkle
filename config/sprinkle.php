@@ -53,7 +53,7 @@ $config['sprinkle']['asset_locations'] = array
 | run the processing via cronjob or simply from the command line.
 |
 | Sprinkle has a special method for that:
-
+|
 |		$this->sprinkle->bake();
 |
 | For example, you could set up a CLI controller in which you would call 
@@ -61,11 +61,12 @@ $config['sprinkle']['asset_locations'] = array
 |
 | NOTE: this only applies to pre-defined assets. Assets that you load 
 | manually (via js() or css() method) will still be processed (if they
-| have filters).
+| have filters). Also, even if you disable processing, assets will be
+| combined if needed (if such group has not been cached, for example).
 |
 */
 
-$config['sprinkle']['disable_processing'] = FALSE;
+$config['sprinkle']['disable_processing'] = TRUE;
 
 
 /*

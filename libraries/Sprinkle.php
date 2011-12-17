@@ -185,21 +185,7 @@ class Sprinkle
 	{
 		if($asset_array['load'] !== FALSE)
 		{
-			switch($asset_array['origin'])
-			{
-				case 'local':
-					$this->_loaded[$asset_array['type']][$name] = new \Sprinkle\FileAsset($asset_array);
-				break;
-
-				case 'remote':
-					$this->_loaded[$asset_array['type']][$name] = new \Sprinkle\RemoteAsset($asset_array);
-				break;
-
-				default:
-					$this->_loaded[$asset_array['type']][$name] = new \Sprinkle\Asset($asset_array);
-				break;
-			}
-
+			$this->_loaded[$asset_array['type']][$name] = $this->_init_asset($asset_array);
 			$this->_groups[$asset_array['group']]['assets'][$name] = $this->_loaded[$asset_array['type']][$name];
 
 			log_message('debug', 'Sprinkle: asset \''. $name .'\' (version: '. $asset_array['selected_version'] .') loaded');
@@ -209,6 +195,34 @@ class Sprinkle
 			log_message('debug', 'Sprinkle: [WARNING] unable to load asset \''. $name .'\'. (version: '. $asset_array['selected_version'] .'). File does not exist.');
 		}
 
+	}
+
+	/**
+	* Initialize a new Asset object
+	*
+	* @access	private
+	* @param 	array	asset
+	* @return	Asset	asset object
+	*/
+
+	private function _init_asset($asset_array)
+	{
+		switch($asset_array['origin'])
+		{
+			case 'local':
+				$asset = new \Sprinkle\FileAsset($asset_array);
+			break;
+
+			case 'remote':
+				$asset = new \Sprinkle\RemoteAsset($asset_array);
+			break;
+
+			default:
+				$asset = new \Sprinkle\Asset($asset_array);
+			break;
+		}
+
+		return $asset;
 	}
 
 	/**
@@ -493,18 +507,28 @@ class Sprinkle
 	* has all the required information.
 	*
 	* @access	private
-	* @param 	array	asset
-	* @return	array	re-arranged asset array
+	* @param 	array 	asset
+	* @param 	string	which asset version should we use?
+	* @return	array 	re-arranged asset array
 	*/
 
-	private function _format_asset($asset)
+	private function _format_asset($asset, $version = '')
 	{
-		// We do this check because it's allowed not to define versions.
-		if(!array_key_exists('versions', $asset) && $asset['type'] != 'group')
-			$asset['versions']['default'] = $asset['src'];
+		if(empty($version))
+		{
+			// We do this check because it's allowed not to define versions.
+			if(!array_key_exists('versions', $asset) && $asset['type'] != 'group')
+				$asset['versions']['default'] = $asset['src'];
 
-		$asset['origin'] = (is_url($asset['versions'][$asset['selected_version']])) ? 'remote' : 'local';
-		$asset['src'] = $asset['versions'][$asset['selected_version']];
+			$selected_version = $asset['selected_version'];
+		}
+		else
+		{
+			$selected_version = $version;
+		}
+
+		$asset['origin'] = (is_url($asset['versions'][$selected_version])) ? 'remote' : 'local';
+		$asset['src'] = $asset['versions'][$selected_version];
 
 		$filename = substr(strrchr($asset['src'], '/'), 1);
 		$filename = (empty($filename)) ? $asset['src'] : $filename;
@@ -718,9 +742,49 @@ class Sprinkle
 	* @return	void
 	*/
 
-	public function bake()
+	public function bake($verbose = FALSE)
 	{
-		
+		$baked_assets = array();
+		$asset_counter = 1;
+
+		foreach($this->_assets as $name => $asset)
+		{
+			if($asset['type'] != 'group')
+			{
+				if(!array_key_exists('versions', $asset))
+					$asset['versions']['default'] = $asset['src'];
+					
+				foreach($asset['versions'] as $version => $src)
+				{
+					$formatted_asset = $this->_format_asset($asset, $version);
+					$formatted_asset['selected_version'] = $version;
+
+					if($formatted_asset['load'] !== FALSE)
+					{
+						$baked_assets[$name][$version] = $this->_init_asset($formatted_asset);
+						$asset_object = $baked_assets[$name][$version];
+
+						if($asset_object->minify && $this->_config['minify_'. $asset_object->type])
+						{
+							$asset_object->add_filter($this->_config['minify_'. $asset_object->type . '_filter']);
+						}
+
+						if($verbose) echo "[". $asset_counter ."] Baking ". $name . " (version: ". $version . ")... \n";
+
+						$this->CI->benchmark->mark($name . $version . '_start');
+
+						$this->_run_filters($asset_object);
+						$asset_object->cache();
+
+						$this->CI->benchmark->mark($name . $version . '_end');
+
+						if($verbose) echo "Baked ". $asset_object->cached_file . " (". $this->CI->benchmark->elapsed_time($name . $version . '_start', $name . $version . '_end') ."s) \n";
+
+						$asset_counter++;
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -746,21 +810,26 @@ class Sprinkle
 		{
 			if($asset->type == $type)
 			{
-				if($this->_config['minify_'. $type] && $asset->minify)
+				if(!$this->_config['disable_processing'])
 				{
-					$asset->add_filter($this->_config['minify_'. $type .'_filter']);
-				}
+					if($this->_config['minify_'. $type] && $asset->minify)
+					{
+						$asset->add_filter($this->_config['minify_'. $type .'_filter']);
+					}
 
-				if($asset->has_filters() && !$asset->is_cached())
-				{
-					$this->_run_filters($asset);
-					$asset->cache();
+					if($asset->has_filters() && !$asset->is_cached())
+					{
+						$this->_run_filters($asset);
+						$asset->cache();
+					}
 				}
 
 				if($this->_config['combine'] && $asset->combine)
 				{
 					$prepared[$asset->group][] = $asset;
-					$modified[$asset->group][] = $asset->get_last_modified();
+
+					if(!$this->_config['disable_processing'])
+						$modified[$asset->group][] = $asset->get_last_modified();
 				}
 				else
 				{
@@ -776,15 +845,41 @@ class Sprinkle
 			{
 				if(!empty($assets))
 				{
-					$last_modified = max($modified[$group]);
-
-					$filename = $group . '-'. $last_modified .'.'. $type;
-					if(!file_exists($this->_config['cache_dir'] . $filename))
+					if(!$this->_config['disable_processing'])
 					{
-						$this->_combine($filename, $assets);
-					}
+						$last_modified = max($modified[$group]);
 
-					$output .= $this->_create_tags_from_multpile($filename, $assets[0]);
+						$filename = $group . '-'. $last_modified .'.'. $type;
+						if(!file_exists($this->_config['cache_dir'] . $filename))
+						{
+							$this->_combine($filename, $assets);
+						}
+
+						$output .= $this->_create_tags_from_multpile($filename, $assets[0]);
+					}
+					else
+					{
+						$filename_hash = '';
+
+						// Construct a unique string
+						foreach($assets as $asset)
+						{
+							$filename_hash .= $asset->filename . $asset->selected_version;
+						}
+
+						// Generate a hash
+						$filename_hash = md5($filename_hash);
+						$filename_hash = substr($filename_hash, 0, 8);
+
+						$filename = $group . '-'. $filename_hash . '.' . $type;
+
+						if(!file_exists($this->_config['cache_dir'] . $filename))
+						{
+							$this->_combine($filename, $assets);
+						}
+
+						$output .= $this->_create_tags_from_multpile($filename, $assets[0]);
+					}
 				}
 			}
 		}

@@ -111,6 +111,7 @@ class Asset implements Sprinkle_Asset_Interface
 	protected $last_modified;
 	protected $tmp_file;
 	protected $cached_file;
+	protected $cached_files = array();
 
 	public function __construct($params = array())
 	{
@@ -220,7 +221,8 @@ class Asset implements Sprinkle_Asset_Interface
 
 	public function cache()
 	{
-		$this->cached_file = $this->cache_dir . $this->filename . '-' . $this->selected_version . '-'. $this->get_last_modified() . '.'. $this->type;
+		$filename_hash = substr(hash("md5", ($this->filename . $this->selected_version . $this->src)), 0, 8);
+		$this->cached_file = $this->cache_dir . $this->filename . '-' . $this->selected_version . '-'. $filename_hash . '.'. $this->type;
 		@file_put_contents($this->cached_file, $this->get_contents());
 	}
 
@@ -233,7 +235,8 @@ class Asset implements Sprinkle_Asset_Interface
 
 	public function is_cached()
 	{
-		$file = $this->cache_dir . $this->filename . '-' . $this->selected_version . '-'. $this->get_last_modified() . '.'. $this->type;
+		$filename_hash = substr(hash("md5", ($this->filename . $this->selected_version . $this->src)), 0, 8);
+		$file = $this->cache_dir . $this->filename . '-' . $this->selected_version . '-'. $filename_hash . '.'. $this->type;
 
 		if(is_file(realpath($file)))
 		{
