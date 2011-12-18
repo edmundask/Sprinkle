@@ -632,8 +632,6 @@ class Sprinkle
 				{
 					foreach($val['replace'] as $name => $version) 
 					{
-						echo $name .' (v: '. $version .')';
-						echo '<br>';
 						$this->replace($name, $version);
 					}
 				}
