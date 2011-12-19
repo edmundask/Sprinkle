@@ -1,11 +1,10 @@
-
 # Sprinkle - Asset Management Library
 
 Sprinkle is an asset management library for CodeIgniter which seeks to simplify the process of loading assets on the page. The library includes key features such as auto-loading, combining, compressing CSS or JS files, caching, and much more.
 
 # Requirements
 
-* PHP 5
+* PHP 5.3.x
 * [CodeIgniter](http://codeigniter.com/) 2.x
 
 # Known Issues
