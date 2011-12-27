@@ -13,7 +13,7 @@
  * @category  			Config
  * @author    			Edmundas Kondrašovas <as@edmundask.lt>
  * @license   			http://www.opensource.org/licenses/MIT
- * @version   			1.0
+ * @version   			1.0.3
  * @copyright 			Copyright (c) 2011 Edmundas Kondrašovas <as@edmundask.lt>
  */
 
@@ -91,7 +91,7 @@ $config['sprinkle']['use_yaml'] = TRUE;
 | Minify CSS assets
 |--------------------------------------------------------------------------
 |
-| If this option is set to TRUE, all CSS assets will be minified by default.
+| If this option is set to TRUE, CSS assets will be allowed to be minified.
 |
 */
 
@@ -116,7 +116,7 @@ $config['sprinkle']['minify_css_filter'] = 'cssmin';
 | Minify javascript assets
 |--------------------------------------------------------------------------
 |
-| If this option is set to TRUE, all JS assets will be minified by default.
+| If this option is set to TRUE, JS assets will be allowed to be minified.
 |
 */
 
@@ -134,6 +134,20 @@ $config['sprinkle']['minify_js'] = TRUE;
 */
 
 $config['sprinkle']['minify_js_filter'] = 'jsmin';
+
+
+/*
+|--------------------------------------------------------------------------
+| Auto-load filters for each CSS/JS asset
+|--------------------------------------------------------------------------
+|
+| When most of your assets have common filters that need to be applied, it
+| is wise to set these filters here.
+|
+*/
+
+$config['sprinkle']['autoload_css_filters'] = array();
+$config['sprinkle']['autoload_js_filters'] = array();
 
 
 /*
@@ -198,6 +212,3 @@ $config['sprinkle']['use_curl'] = FALSE;
 */
 
 $config['sprinkle']['filters_path'] = 'libraries/filters/';
-
-/* End of file sprinkle.php */
-/* Location: ./sparks/sprinkle/1.0.0/config/sprinkle.php */

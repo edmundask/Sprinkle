@@ -13,7 +13,7 @@
  * @category  			Libraries
  * @author    			Edmundas Kondrašovas <as@edmundask.lt>
  * @license   			http://www.opensource.org/licenses/MIT
- * @version   			1.0
+ * @version   			1.0.3
  * @copyright 			Copyright (c) 2011 Edmundas Kondrašovas <as@edmundask.lt>
  */
 
@@ -297,10 +297,11 @@ class Sprinkle
 	* @param 	boolean		minify the asset
 	* @param 	boolean		allow the asset to be combined with other assets
 	* @param 	array  		filters
+	* @param 	array  		filters to exlude
 	* @return	mixed  		asset name or an array of names
 	*/
 
-	public function css($src, $media = 'screen', $minify = FALSE, $combine = FALSE, $filters = array())
+	public function css($src, $media = 'screen', $minify = FALSE, $combine = FALSE, $filters = array(), $exlude_filters = array())
 	{
 		if(empty($src)) return;
 
@@ -314,11 +315,12 @@ class Sprinkle
 				// we want to have the ability to set the options for each asset individually.
 				if(is_array($asset))
 				{
-					$asset_src    	= (isset($asset['src'])) ? $asset['src'] : '';
-					$asset_media  	= (!isset($asset['media'])) ? $media : $asset['media'];
-					$asset_minify 	= (!isset($asset['minify'])) ? $minify : $asset['minify'];
-					$asset_combine	= (!isset($asset['combine'])) ? $combine : $asset['combine'];
-					$asset_filters	= (!isset($asset['filters'])) ? $filters : $asset['filters'];
+					$asset_src            	= (isset($asset['src'])) ? $asset['src'] : '';
+					$asset_media          	= (!isset($asset['media'])) ? $media : $asset['media'];
+					$asset_minify         	= (!isset($asset['minify'])) ? $minify : $asset['minify'];
+					$asset_combine        	= (!isset($asset['combine'])) ? $combine : $asset['combine'];
+					$asset_filters        	= (!isset($asset['filters'])) ? $filters : $asset['filters'];
+					$asset_exclude_filters	= (!isset($asset['exlude_filters'])) ? $exlude_filters : $asset['exlude_filters'];
 				}
 				else
 				{
@@ -329,7 +331,7 @@ class Sprinkle
 					$asset_filters	= $filters;
 				}
 
-				$assets_to_return[] = $this->css($asset_src, $asset_media, $asset_minify, $asset_combine, $asset_filters);
+				$assets_to_return[] = $this->css($asset_src, $asset_media, $asset_minify, $asset_combine, $asset_filters, $exclude_filters);
 			}
 
 			return $assets_to_return;
@@ -351,6 +353,7 @@ class Sprinkle
 				'group'           	=> 'stylesheets',
 				'selected_version'	=> 'default',
 				'filters'         	=> $filters,
+				'exlude_filters'  	=> $exlude_filters,
 				'pre_defined'     	=> FALSE
 			);
 
@@ -373,10 +376,11 @@ class Sprinkle
 	* @param 	boolean		minify the asset
 	* @param 	boolean		allow the asset to be combined with other assets
 	* @param 	array  		filters
+	* @param 	array  		filters to exlude
 	* @return	mixed  		asset name or an array of names
 	*/
 
-	public function js($src, $minify = FALSE, $combine = FALSE, $filters = array())
+	public function js($src, $minify = FALSE, $combine = FALSE, $filters = array(), $exlude_filters = array())
 	{
 		if(empty($src)) return;
 
@@ -390,20 +394,22 @@ class Sprinkle
 				// we want to have the ability to set the options for each asset individually.
 				if(is_array($asset))
 				{
-					$asset_src    	= (isset($asset['src'])) ? $asset['src'] : '';
-					$asset_minify 	= (!isset($asset['minify'])) ? TRUE : $asset['minify'];
-					$asset_combine	= (!isset($asset['combine'])) ? TRUE : $asset['combine'];
-					$asset_filters	= (!isset($asset['filters'])) ? $filters : $asset['filters'];
+					$asset_src            	= (isset($asset['src'])) ? $asset['src'] : '';
+					$asset_minify         	= (!isset($asset['minify'])) ? TRUE : $asset['minify'];
+					$asset_combine        	= (!isset($asset['combine'])) ? TRUE : $asset['combine'];
+					$asset_filters        	= (!isset($asset['filters'])) ? $filters : $asset['filters'];
+					$asset_exclude_filters	= (!isset($asset['exlude_filters'])) ? $exlude_filters : $asset['exlude_filters'];
 				}
 				else
 				{
-					$asset_src    	= $asset;
-					$asset_minify 	= $minify;
-					$asset_combine	= $combine;
-					$asset_filters	= $filters;
+					$asset_src           	= $asset;
+					$asset_minify        	= $minify;
+					$asset_combine       	= $combine;
+					$asset_filters       	= $filters;
+					$asset_exlude_filters	= $exclude_filters;
 				}
 
-				$assets_to_return[] = $this->js($asset_src, $asset_minify, $asset_combine, $asset_filters);
+				$assets_to_return[] = $this->js($asset_src, $asset_minify, $asset_combine, $asset_filters, $asset_exlude_filters);
 			}
 
 			return $assets_to_return;
@@ -422,6 +428,7 @@ class Sprinkle
 				'group'           	=> 'javascripts',
 				'selected_version'	=> 'default',
 				'filters'         	=> $filters,
+				'exlude_filters'  	=> $exlude_filters,
 				'pre_defined'     	=> FALSE
 			);
 
@@ -533,6 +540,22 @@ class Sprinkle
 		$asset['extension'] = $ext;
 
 		if(!array_key_exists('filters', $asset)) $asset['filters'] = array();
+
+		// Assign & exlude filters
+		if($asset['type'] != 'group')
+		{
+			$asset['filters'] = array_merge($this->_config['autoload_'. $asset['type'] .'_filters'], $asset['filters']);
+
+			if(array_key_exists('exlude_filters', $asset) && count($asset['filters']) > 0)
+			{
+				foreach($asset['filters'] as $k => $v)
+				{
+					if(in_array($v, $asset['exlude_filters'])) unset($asset['filters'][$k]);
+				}
+			}
+		}
+
+		if($asset['type'] == 'css' && !array_key_exists('media', $asset)) $asset['media'] = 'screen';
 		
 		if($asset['origin'] == 'local')
 		{
@@ -599,6 +622,8 @@ class Sprinkle
 		if(!empty($routes)) $this->_routes = $routes;
 
 		$uri = $this->CI->uri->uri_string();
+		// If the uri string is empty, it means it's the home page. For this reason we must use the re-routed uri string.
+		$uri = empty($uri) ?: $this->CI->uri->ruri_string();
 
 		// Stole some bits from the original CodeIgniter system file: core/Router.php
 		foreach ($this->_routes as $key => $val)
@@ -1145,6 +1170,3 @@ class Sprinkle
 	}
 }
 // End Class
-
-/* End of file Sprinkle.php */
-/* Location: ./sparks/sprinkle/1.0.0/libraries/Sprinkle.php */

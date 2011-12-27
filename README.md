@@ -7,14 +7,56 @@ Sprinkle is an asset management library for CodeIgniter which seeks to simplify 
 * PHP 5.3.x
 * [CodeIgniter](http://codeigniter.com/) 2.x
 
+# How To Use It
+
+## 1. Load the library
+
+`$this->load->spark('sprinkle');`
+
+## 2. Define assets
+
+```yaml
+jquery:
+  type: js
+  minify: false
+  combine: false
+  src: http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js
+```
+
+## 3. Set up asset routes or load assets from the controller
+
+### Asset routes
+
+```yaml
+'welcome/(:any)':
+  assets:
+    - jquery
+```
+
+### Load from the controller
+
+`$this->sprinkle->load('jquery');`
+
+## 4. Output!
+
+```
+echo $this->sprinkle->output();
+```
+
+See the [wiki](https://github.com/edmundask/Sprinkle/wiki) for more information.
+
 # Known Issues
 
 * Specifying https protocol in the asset source will prevent Sprinkle from fetching the asset contents.
 * After changing some of the settings in Sprinkle configuration or asset definitions file you may not get the result you want. To do avoid this, you have to clear the cache first.
 
-# How To Use It
+# CHANGELOG
 
-See the [wiki](https://github.com/edmundask/Sprinkle/wiki)
+### 1.0.3
+
+* (:any) wildcard in the asset routes file now also takes the homepage (default CI route) into account.
+* Added asset filter auto-loading. You can set these filters in the configuration file.
+* When defining assets (or loading them from a controller), you can now exlude specific filters.
 
 # COPYRIGHT
 
