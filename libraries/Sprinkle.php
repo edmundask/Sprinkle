@@ -546,11 +546,11 @@ class Sprinkle
 		{
 			$asset['filters'] = array_merge($this->_config['autoload_'. $asset['type'] .'_filters'], $asset['filters']);
 
-			if(array_key_exists('exlude_filters', $asset) && count($asset['filters']) > 0)
+			if(array_key_exists('exclude_filters', $asset) && count($asset['filters']) > 0)
 			{
 				foreach($asset['filters'] as $k => $v)
 				{
-					if(in_array($v, $asset['exlude_filters'])) unset($asset['filters'][$k]);
+					if(in_array($v, $asset['exclude_filters'])) unset($asset['filters'][$k]);
 				}
 			}
 		}
