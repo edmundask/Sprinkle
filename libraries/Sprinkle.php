@@ -297,11 +297,11 @@ class Sprinkle
 	* @param 	boolean		minify the asset
 	* @param 	boolean		allow the asset to be combined with other assets
 	* @param 	array  		filters
-	* @param 	array  		filters to exlude
+	* @param 	array  		filters to exclude
 	* @return	mixed  		asset name or an array of names
 	*/
 
-	public function css($src, $media = 'screen', $minify = FALSE, $combine = FALSE, $filters = array(), $exlude_filters = array())
+	public function css($src, $media = 'screen', $minify = FALSE, $combine = FALSE, $filters = array(), $exclude_filters = array())
 	{
 		if(empty($src)) return;
 
@@ -320,7 +320,7 @@ class Sprinkle
 					$asset_minify         	= (!isset($asset['minify'])) ? $minify : $asset['minify'];
 					$asset_combine        	= (!isset($asset['combine'])) ? $combine : $asset['combine'];
 					$asset_filters        	= (!isset($asset['filters'])) ? $filters : $asset['filters'];
-					$asset_exclude_filters	= (!isset($asset['exlude_filters'])) ? $exlude_filters : $asset['exlude_filters'];
+					$asset_exclude_filters	= (!isset($asset['exclude_filters'])) ? $exclude_filters : $asset['exclude_filters'];
 				}
 				else
 				{
@@ -353,7 +353,7 @@ class Sprinkle
 				'group'           	=> 'stylesheets',
 				'selected_version'	=> 'default',
 				'filters'         	=> $filters,
-				'exlude_filters'  	=> $exlude_filters,
+				'exclude_filters' 	=> $exclude_filters,
 				'pre_defined'     	=> FALSE
 			);
 
@@ -376,11 +376,11 @@ class Sprinkle
 	* @param 	boolean		minify the asset
 	* @param 	boolean		allow the asset to be combined with other assets
 	* @param 	array  		filters
-	* @param 	array  		filters to exlude
+	* @param 	array  		filters to exclude
 	* @return	mixed  		asset name or an array of names
 	*/
 
-	public function js($src, $minify = FALSE, $combine = FALSE, $filters = array(), $exlude_filters = array())
+	public function js($src, $minify = FALSE, $combine = FALSE, $filters = array(), $exclude_filters = array())
 	{
 		if(empty($src)) return;
 
@@ -398,18 +398,18 @@ class Sprinkle
 					$asset_minify         	= (!isset($asset['minify'])) ? TRUE : $asset['minify'];
 					$asset_combine        	= (!isset($asset['combine'])) ? TRUE : $asset['combine'];
 					$asset_filters        	= (!isset($asset['filters'])) ? $filters : $asset['filters'];
-					$asset_exclude_filters	= (!isset($asset['exlude_filters'])) ? $exlude_filters : $asset['exlude_filters'];
+					$asset_exclude_filters	= (!isset($asset['exclude_filters'])) ? $exclude_filters : $asset['exclude_filters'];
 				}
 				else
 				{
-					$asset_src           	= $asset;
-					$asset_minify        	= $minify;
-					$asset_combine       	= $combine;
-					$asset_filters       	= $filters;
-					$asset_exlude_filters	= $exclude_filters;
+					$asset_src            	= $asset;
+					$asset_minify         	= $minify;
+					$asset_combine        	= $combine;
+					$asset_filters        	= $filters;
+					$asset_exclude_filters	= $exclude_filters;
 				}
 
-				$assets_to_return[] = $this->js($asset_src, $asset_minify, $asset_combine, $asset_filters, $asset_exlude_filters);
+				$assets_to_return[] = $this->js($asset_src, $asset_minify, $asset_combine, $asset_filters, $asset_exclude_filters);
 			}
 
 			return $assets_to_return;
@@ -428,7 +428,7 @@ class Sprinkle
 				'group'           	=> 'javascripts',
 				'selected_version'	=> 'default',
 				'filters'         	=> $filters,
-				'exlude_filters'  	=> $exlude_filters,
+				'exclude_filters' 	=> $exclude_filters,
 				'pre_defined'     	=> FALSE
 			);
 
@@ -541,16 +541,16 @@ class Sprinkle
 
 		if(!array_key_exists('filters', $asset)) $asset['filters'] = array();
 
-		// Assign & exlude filters
+		// Assign & exclude filters
 		if($asset['type'] != 'group')
 		{
 			$asset['filters'] = array_merge($this->_config['autoload_'. $asset['type'] .'_filters'], $asset['filters']);
 
-			if(array_key_exists('exlude_filters', $asset) && count($asset['filters']) > 0)
+			if(array_key_exists('exclude_filters', $asset) && count($asset['filters']) > 0)
 			{
 				foreach($asset['filters'] as $k => $v)
 				{
-					if(in_array($v, $asset['exlude_filters'])) unset($asset['filters'][$k]);
+					if(in_array($v, $asset['exclude_filters'])) unset($asset['filters'][$k]);
 				}
 			}
 		}
