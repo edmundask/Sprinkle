@@ -45,18 +45,22 @@ echo $this->sprinkle->output();
 
 See the [wiki](https://github.com/edmundask/Sprinkle/wiki) for more information.
 
-# Known Issues
-
-* Specifying https protocol in the asset source will prevent Sprinkle from fetching the asset contents.
-* After changing some of the settings in Sprinkle configuration or asset definitions file you may not get the result you want. To do avoid this, you have to clear the cache first.
-
 # CHANGELOG
+
+### 1.0.4
+
+* Fixed a bug which caused some of the routes not to be parsed correctly.
 
 ### 1.0.3
 
 * (:any) wildcard in the asset routes file now also takes the homepage (default CI route) into account.
 * Added asset filter auto-loading. You can set these filters in the configuration file.
-* When defining assets (or loading them from a controller), you can now exlude specific filters.
+* When defining assets (or loading them from a controller), you can now exclude specific filters.
+
+# Known Issues
+
+* Specifying https protocol in the asset source will prevent Sprinkle from fetching the asset contents.
+* After changing some of the settings in Sprinkle configuration or asset definitions file you may not get the result you want. To do avoid this, you have to clear the cache first.
 
 # COPYRIGHT
 

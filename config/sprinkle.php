@@ -13,7 +13,7 @@
  * @category  			Config
  * @author    			Edmundas Kondrašovas <as@edmundask.lt>
  * @license   			http://www.opensource.org/licenses/MIT
- * @version   			1.0.3
+ * @version   			1.0.4
  * @copyright 			Copyright (c) 2011 Edmundas Kondrašovas <as@edmundask.lt>
  */
 

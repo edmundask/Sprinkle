@@ -13,7 +13,7 @@
  * @category  			Libraries
  * @author    			Edmundas Kondrašovas <as@edmundask.lt>
  * @license   			http://www.opensource.org/licenses/MIT
- * @version   			1.0.3
+ * @version   			1.0.4
  * @copyright 			Copyright (c) 2011 Edmundas Kondrašovas <as@edmundask.lt>
  */
 
@@ -546,11 +546,11 @@ class Sprinkle
 		{
 			$asset['filters'] = array_merge($this->_config['autoload_'. $asset['type'] .'_filters'], $asset['filters']);
 
-			if(array_key_exists('exclude_filters', $asset) && count($asset['filters']) > 0)
+			if(array_key_exists('exlude_filters', $asset) && count($asset['filters']) > 0)
 			{
 				foreach($asset['filters'] as $k => $v)
 				{
-					if(in_array($v, $asset['exclude_filters'])) unset($asset['filters'][$k]);
+					if(in_array($v, $asset['exlude_filters'])) unset($asset['filters'][$k]);
 				}
 			}
 		}
@@ -623,7 +623,8 @@ class Sprinkle
 
 		$uri = $this->CI->uri->uri_string();
 		// If the uri string is empty, it means it's the home page. For this reason we must use the re-routed uri string.
-		$uri = empty($uri) ?: $this->CI->uri->ruri_string();
+		// Also, we get rid of the first forwarding slash to make sure asset routing works correctly.
+		$uri = empty($uri) ?: substr($this->CI->uri->ruri_string(), 1, strlen($this->CI->uri->ruri_string()));
 
 		// Stole some bits from the original CodeIgniter system file: core/Router.php
 		foreach ($this->_routes as $key => $val)
