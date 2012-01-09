@@ -622,9 +622,9 @@ class Sprinkle
 		if(!empty($routes)) $this->_routes = $routes;
 
 		$uri = $this->CI->uri->uri_string();
+		
 		// If the uri string is empty, it means it's the home page. For this reason we must use the re-routed uri string.
-		// Also, we get rid of the first forwarding slash to make sure asset routing works correctly.
-		$uri = empty($uri) ?: substr($this->CI->uri->ruri_string(), 1, strlen($this->CI->uri->ruri_string()));
+		$uri = empty($uri) ? trim(trim($this->CI->router->fetch_directory(), '/') . '/' . trim($this->CI->uri->ruri_string(), '/'), '/') : $uri;
 
 		// Stole some bits from the original CodeIgniter system file: core/Router.php
 		foreach ($this->_routes as $key => $val)
