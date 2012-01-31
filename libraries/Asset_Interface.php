@@ -111,7 +111,6 @@ class Asset implements Sprinkle_Asset_Interface
 	protected $last_modified;
 	protected $tmp_file;
 	protected $cached_file;
-	protected $cached_files = array();
 
 	public function __construct($params = array())
 	{
@@ -140,6 +139,8 @@ class Asset implements Sprinkle_Asset_Interface
 	public function get_contents()
 	{
 		$path = (!empty($this->tmp_file)) ? $this->tmp_file : $this->full_path;
+		$path = (!$this->is_cached() && empty($this->tmp_file)) ? $this->cached_file : $path;
+		
 		return @file_get_contents($path);
 	}
 
@@ -291,6 +292,9 @@ class RemoteAsset extends Asset
 	{
 		// The file was already downloaded (and probably processed in some way), so get contents from there.
 		if(!empty($this->tmp_file)) return @file_get_contents($this->tmp_file);
+
+		// If asset already exists in the cache (for ex, it was pre-baked), get the cached contents.
+		if($this->is_cached()) return @file_get_contents($this->cached_file);
 
 		// If cURL is not available or we don't want to use it, use file_get_contents() instead.
 		if(!function_exists('curl_init') || $this->use_curl === FALSE)
