@@ -728,14 +728,14 @@ class Sprinkle
 	* @return	string	HTML
 	*/
 
-	public function output($type = 'all')
+	public function output($type = 'all', $subtype = FALSE)
 	{
 		$output = '';
 
 		switch($type)
 		{
 			default:
-				if(array_key_exists($type, $this->_groups)) $output = $this->_output_group($type);
+				if(array_key_exists($type, $this->_groups)) $output = $this->_output_group($type, $subtype);
 			break;
 
 			case 'css':
@@ -915,12 +915,20 @@ class Sprinkle
 	* @return	HTML
 	*/
 
-	private function _output_group($group)
+	private function _output_group($group, $type = FALSE)
 	{
 		$output = '';
-
-		$output .= $this->_output_assets('css', $this->_groups[$group]['assets']);
-		$output .= $this->_output_assets('js', $this->_groups[$group]['assets']);
+        
+        if (!$type)
+        {
+            $output .= $this->_output_assets('css', $this->_groups[$group]['assets']);
+            $output .= $this->_output_assets('js', $this->_groups[$group]['assets']);
+        }
+        else 
+        {
+            $output .= ($type == 'css' ? $this->_output_assets('css', $this->_groups[$group]['assets']) : '');
+    		$output .= ($type == 'js' ? $this->_output_assets('js', $this->_groups[$group]['assets']) : '');
+        }
 
 		return $output;
 	}
