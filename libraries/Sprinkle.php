@@ -622,18 +622,19 @@ class Sprinkle
 		if(!empty($routes)) $this->_routes = $routes;
 
 		$uri = $this->CI->uri->uri_string();
-		
-		// If the uri string is empty, it means it's the home page. For this reason we must use the re-routed uri string.
-		$uri = empty($uri) ? trim(trim($this->CI->router->fetch_directory(), '/') . '/' . trim($this->CI->uri->ruri_string(), '/'), '/') : $uri;
+		$uri = (empty($uri)) ? $this->CI->router->default_controller : $uri;
 
 		// Stole some bits from the original CodeIgniter system file: core/Router.php
 		foreach ($this->_routes as $key => $val)
 		{
 			// Convert wild-cards to RegEx
-			$key = str_replace(':any', '.+', str_replace(':num', '[0-9]+', $key));
+			$key = str_replace('(:!any)', '(\/.+)?', str_replace(':num', '[0-9]+', $key));
+			$key = str_replace(':any', '.+', $key);
+			$key = str_replace(':all', '.+', $key);
+			$key = str_replace('(:home)', $this->CI->router->default_controller, $key);
 
-			// Does the RegEx match?
-			if (preg_match('#^'.$key.'$#', $uri))
+			// Match RegEx or check if the route is the the one defined as '(:default)'
+			if (preg_match('#^'.$key.'$#', $uri) || $key == '(:default)')
 			{
 				// Load the assets!
 				if(array_key_exists('assets', $val) && count($val['assets']) > 0)
