@@ -8,7 +8,7 @@
   <style type="text/css">
     body {
       margin-top: 1.0em;
-      background-color: #314359;
+      background-color: #3b3f44;
       font-family: Helvetica, Arial, FreeSans, san-serif;
       color: #ffffff;
     }
@@ -16,17 +16,29 @@
       margin: 0 auto;
       width: 700px;
     }
-    h1 { font-size: 3.8em; color: #cebca6; margin-bottom: 3px; }
+
+    #logo 
+    {
+      display: block;
+      float: left;
+      width: 500px;
+      height: 200px;
+      background: url(http://dl.dropbox.com/u/2155732/sprinkle-logo-tmp.png) no-repeat;
+    }
+
+    h1 { font-size: 3.8em; color: #9ca5b0; margin-bottom: 3px; }
     h1 .small { font-size: 0.4em; }
     h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #cebca6; }
-    h3 { text-align: center; color: #cebca6; }
-    a { color: #cebca6; }
+    h2 { font-size: 1.5em; color: #9ca5b0; }
+    h3 { color: #9ca5b0; }
+    a { color: #6e92bd; }
     .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
+    .download { float: right; margin-top: 60px; }
     pre { background: #000; color: #fff; padding: 15px;}
     hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
     .footer { text-align:center; padding-top:30px; font-style: italic; }
+
+    .clear { clear: both; }
   </style>
 </head>
 
@@ -42,11 +54,15 @@
         <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
     </div>
 
-    <h1><a href="https://github.com/edmundask/Sprinkle">Sprinkle</a>
-      <span class="small">by <a href="https://github.com/edmundask">edmundask</a></span></h1>
+    <h1><a href="https://github.com/edmundask/Sprinkle" id="logo"></a></h1>
+
+    <div class="clear"></div>
 
     <div class="description">
-      Asset management library for CodeIgniter
+      <p>
+        Sprinkle is an asset management library for CodeIgniter which seeks to simplify the process of loading assets on the page. 
+        The library includes key features such as auto-loading, combining, minifying CSS or JS files, caching, and much more.
+      </p>
     </div>
 
     
@@ -55,21 +71,52 @@
       <h2>Dependencies</h2>
       <p>- CodeIgniter 2.0+</p>
       <p>- PHP 5.3+</p>
+
+      <h2>Installation</h2>
+
+      <p>The easiest way to install and use Sprinkle is to download it as a <a href="http://getsparks.org/packages/Sprinkle/versions/HEAD/show">spark</a>. Otherwise just put the files in appropriate folders (example: libraries to application/libraries) and load the library.</p>
+    
+      <h2>How To Use It</h2>
+    
+      <h3>1. Load the library</h3>
+
+      <p><pre>$this->load->spark('sprinkle');</pre></p>
+
+      <h3>2. Define assets</h3>
+
+      <p><pre>jquery:
+  type: js
+  minify: false
+  combine: false
+  src: http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.js</pre></p>
+
+      <h3>3. Set up asset routes or load assets from the controller</h3>
+
+      <p><b>Asset routes</b></p>
+      
+      <p><pre>'(:home)':
+  assets:
+    - jquery
+
+'welcome/(:any)':
+  assets:
+    - jquery</pre></p>
+
+      <p><b>Load from the controller</b></p>
+
+      <p><pre>$this->sprinkle->load('jquery');</pre></p>
+
+      <h3>4. Output!</h3>
+
+      <p><pre>echo $this->sprinkle->output();</pre></p>
+    
+      <h2>Author</h2>
+      <p>- Edmundas Kondrašovas</p>
     
 
     
-
-    
-
-    
-      <h2>Authors</h2>
-      <p>Edmundas (as@edmundask.lt)</p>
-    
-
-    
-      <h2>Contact</h2>
-      <p>Edmundas (as@edmundask.lt)
-<br/>      </p>
+      <h2>Contributors &amp; Supporters</h2>
+      <p>- Ammon Casey</p>
     
 
     <h2>Download</h2>
