@@ -625,16 +625,15 @@ class Sprinkle
 		$uri = (empty($uri)) ? $this->CI->router->default_controller : $uri;
 
 		// Stole some bits from the original CodeIgniter system file: core/Router.php
-		foreach ($this->_routes as $key => $val)
+		foreach($this->_routes as $key => $val)
 		{
 			// Convert wild-cards to RegEx
 			$key = str_replace('(:!any)', '(\/.+)?', str_replace(':num', '[0-9]+', $key));
 			$key = str_replace(':any', '.+', $key);
-			$key = str_replace(':all', '.+', $key);
 			$key = str_replace('(:home)', $this->CI->router->default_controller, $key);
 
 			// Match RegEx or check if the route is the the one defined as '(:default)'
-			if (preg_match('#^'.$key.'$#', $uri) || $key == '(:default)')
+			if(preg_match('#^'.$key.'$#', $uri) || $key == '(:default)')
 			{
 				// Load the assets!
 				if(array_key_exists('assets', $val) && count($val['assets']) > 0)
@@ -726,10 +725,11 @@ class Sprinkle
 	*
 	* @access	public
 	* @param 	string	type/group
+	* @param 	string	subtype or just simply type of an asset group (optional)
 	* @return	string	HTML
 	*/
 
-	public function output($type = 'all', $subtype = FALSE)
+	public function output($type = 'all', $subtype = '')
 	{
 		$output = '';
 
@@ -913,23 +913,23 @@ class Sprinkle
 	*
 	* @access	private
 	* @param 	string	group name
+	* @param 	string	asset type (optional)
 	* @return	HTML
 	*/
 
-	private function _output_group($group, $type = FALSE)
+	private function _output_group($group, $type = '')
 	{
 		$output = '';
-        
-        if (!$type)
-        {
-            $output .= $this->_output_assets('css', $this->_groups[$group]['assets']);
-            $output .= $this->_output_assets('js', $this->_groups[$group]['assets']);
-        }
-        else 
-        {
-            $output .= ($type == 'css' ? $this->_output_assets('css', $this->_groups[$group]['assets']) : '');
-    		$output .= ($type == 'js' ? $this->_output_assets('js', $this->_groups[$group]['assets']) : '');
-        }
+
+		if (empty($type))
+		{
+			$output .= $this->_output_assets('css', $this->_groups[$group]['assets']);
+			$output .= $this->_output_assets('js', $this->_groups[$group]['assets']);
+		}
+		else
+		{
+			$output .= $this->_output_assets($type, $this->_groups[$group]['assets']);
+		}
 
 		return $output;
 	}
