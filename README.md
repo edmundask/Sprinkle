@@ -47,6 +47,13 @@ See the [wiki](https://github.com/edmundask/Sprinkle/wiki) for more information.
 
 # CHANGELOG
 
+### 1.0.5
+
+* Made group() method more compact and flexible. It now supports a desired amount of params: the first one must be the name of a group (string) and rest can be either strings or arrays of strings with LOADED asset names.
+* Added 3 new wildcards for the routes: (:!any), (:default) and (:home). See the wiki for more information.
+* Yet another attempt at fixing critical problems with asset route parsing. Expect more improvements in the future.
+* The method output() now accepts a second parameter which lets you specify what type of assets to output for a group. For example, `$this->sprinkle->output('my_group', 'css');` will only output CSS assets from that group. Thanks to Ammon Casey for adding this feature.
+
 ### 1.0.4
 
 * Fixed a bug which caused some of the routes not to be parsed correctly.
@@ -64,7 +71,7 @@ See the [wiki](https://github.com/edmundask/Sprinkle/wiki) for more information.
 
 # COPYRIGHT
 
-Copyright (c) 2011 Edmundas Kondrašovas
+Copyright (c) 2011-2012 Edmundas Kondrašovas
 
 Permission is hereby granted, free of charge, to any person obtaining a copy 
 of this software and associated documentation files (the "Software"), to deal 
