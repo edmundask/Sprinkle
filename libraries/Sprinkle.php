@@ -446,42 +446,33 @@ class Sprinkle
 	/**
 	* Add assets to a group
 	*
-	* Having 2 parameters which are basically the same (assets1, assets2) may look
-	* like an overkill. However, this is convenient for assigning css/jss assets to
-	* a particular group. For example, you can have assets1 for CSS assets and assets2
-	* for Javascript assets and vice-versa.
+	* The first parameter specifies the group. Other parameters are determined by func_get_args().
+	* NOTE: from the 2nd to the nth parameter, it must be either a string or an array of asset names.
 	*
 	* @access	public
 	* @param 	string	group name
-	* @param 	array 	assets to be added to the group
 	* @return	void
 	*/
 
-	public function group($group, $assets1 = NULL, $assets2 = NULL)
+	public function group($group = '')
 	{
-		if((empty($assets1) && empty($assets2))) return;
+		$args = func_get_args();
 
-		if(!empty($assets1))
+		// No assets to group
+		if(func_num_args() <= 1) return;
+
+		// We don't need the group name in this array
+		unset($args[0]);
+
+		foreach($args as $arg)
 		{
-			if(is_array($assets1))
+			if(is_array($arg))
 			{
-				foreach($assets1 as $asset) $this->_add_to_group($group, $asset);
+				foreach($arg as $asset) $this->_add_to_group($group, $asset);
 			}
 			else
 			{
-				$this->_add_to_group($group, $assets1);
-			}
-		}
-
-		if(!empty($assets2))
-		{
-			if(is_array($assets2))
-			{
-				foreach($assets2 as $asset) $this->_add_to_group($group, $asset);
-			}
-			else
-			{
-				$this->_add_to_group($group, $assets2);
+				$this->_add_to_group($group, $arg);
 			}
 		}
 	}
@@ -525,6 +516,10 @@ class Sprinkle
 		{
 			$selected_version = $version;
 		}
+
+		// Make sure minify and combine keys can be optional
+		$asset['minify'] = (array_key_exists('minify', $asset)) ? $asset['minify'] : FALSE;
+		$asset['combine'] = (array_key_exists('combine', $asset)) ? $asset['combine'] : FALSE;
 
 		$asset['pre_defined'] = (!array_key_exists('pre-defined', $asset)) ? TRUE : FALSE;
 
