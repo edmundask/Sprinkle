@@ -261,10 +261,10 @@ class Asset implements Sprinkle_Asset_Interface
 	}
 
 	/**
-	* Get contents of the asset
+	* Magic method for getting asset attributes
 	*
 	* @access	public
-	* @return	string	asset contents
+	* @return	mixed	returns an attribute based on the key
 	*/
 
 	public function __get($variable)
