@@ -139,7 +139,7 @@ class Asset implements Sprinkle_Asset_Interface
 	public function get_contents()
 	{
 		$path = (!empty($this->tmp_file)) ? $this->tmp_file : $this->full_path;
-		$path = (!$this->is_cached() && empty($this->tmp_file)) ? $this->cached_file : $path;
+		$path = ($this->is_cached() && empty($this->tmp_file)) ? $this->cached_file : $path;
 		
 		return @file_get_contents($path);
 	}
