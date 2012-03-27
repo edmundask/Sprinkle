@@ -804,6 +804,26 @@ class Sprinkle
 	}
 
 	/**
+	* Set asset location(s)
+	*
+	* @access	public
+	* @param 	mixed	string containing relative path or an array of strings
+	* @return	void
+	*/
+
+	public function set_asset_location($location)
+	{
+		if(is_array($location))
+		{
+			$this->_config['asset_locations'] = array_merge($this->_config['asset_locations'], $location);
+		}
+		else
+		{
+			$this->config['asset_locations'][] = $location;
+		}
+	}
+
+	/**
 	* Internal method for outputting the assets
 	*
 	* @access	private
